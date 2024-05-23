@@ -115,7 +115,7 @@ namespace MyCSharpProject
     <link rel='stylesheet' href='file:///F:/Program/Github-Project-Local/sGPT/Project/Assets/atom-one-dark.min.css'>
     <script src='file:///F:/Program/Github-Project-Local/sGPT/Project/Assets/highlight.min.js'></script>
     <style>
-        body { font-family: 'Roboto', sans-serif;  background-color: #303030;color: #e7e7e7;font-size: 21px;}
+        body { font-family: 'Roboto', sans-serif;  background-color: #303030;color: #e7e7e7;font-size: 19px;}
         pre, code { white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word; font-family: Consolas, Monaco, 'Courier New', monospace, 'Microsoft YaHei', sans-serif; }
         pre { padding: 7px; background-color: #888888; border: 1px solid #6e6e6e; border-radius: 3px; }
     </style>

@@ -7,6 +7,7 @@ namespace MyCSharpProject
         public static string ExtractContentFromResponse(string jsonResponse)
         {
             var responseObject = JsonConvert.DeserializeObject<OpenAiResponse>(jsonResponse);
+            ConsoleManager.WriteLine("获得OpenAI响应...");
             return responseObject.choices[0].message.content;
         }
     }

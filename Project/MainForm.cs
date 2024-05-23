@@ -22,46 +22,83 @@ namespace MyCSharpProject
         WebView2 responseWebView;
         NotifyIcon trayIcon;
         ContextMenuStrip trayMenu;
+        Label consoleLabel;
         int count = 0;
+        private SimpleWebServer webServer;
 
         public MainForm()
         {
+            ConsoleManager.WriteLine("Starting sGPT...");
             this.Text = "sGPT";
+
             // 设置窗体的背景色为灰黑色
-            this.BackColor = Color.FromArgb(30, 30, 30); // 使用 RGB 值表示灰黑色
+            this.BackColor = Color.FromArgb(90, 90, 90); // 使用 RGB 值表示灰黑色
 
             // 设置窗体中文字的颜色为白色
             this.ForeColor = Color.White;
             SetupTrayIcon();
             InitializeFolder();
-            this.Size = new Size(700, 1230);
+            this.Size = new Size(700, 1130);
+
+            // 使用TableLayoutPanel来布局
+            TableLayoutPanel layoutPanel = new TableLayoutPanel
+            {
+                RowCount = 2,
+                ColumnCount = 2,
+                Dock = DockStyle.Top,
+                Size = new Size(700, 50),
+                AutoSize = true,
+                BackColor = Color.FromArgb(70, 70, 70)
+            };
+            layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            layoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
             messageLabel = new Label
             {
-                Location = new Point(10, 10),
-                Size = new Size(780, 20),
-                Text = "Press F9 to capture globally."
+                Text = "Press F9 to capture globally.",
+                Dock = DockStyle.Fill,
+                ForeColor = Color.White,
+                BackColor = Color.FromArgb(30, 30, 30),
+                TextAlign = ContentAlignment.MiddleLeft
             };
-            this.Controls.Add(messageLabel);
+            layoutPanel.Controls.Add(messageLabel, 0, 0);
 
             thumbnailBox = new PictureBox
             {
-                Location = new Point(10, 35),
                 Size = new Size(80, 45),
                 BorderStyle = BorderStyle.Fixed3D,
+                Dock = DockStyle.Fill,
+                BackColor = Color.FromArgb(30, 30, 30)
             };
-            this.Controls.Add(thumbnailBox);
+            layoutPanel.Controls.Add(thumbnailBox, 0, 1);
+
+            consoleLabel = new Label
+            {
+                Text = "Console Output:",
+                Dock = DockStyle.Fill,
+                ForeColor = Color.White,
+                BackColor = Color.FromArgb(30, 30, 30),
+                TextAlign = ContentAlignment.MiddleLeft
+            };
+            layoutPanel.Controls.Add(consoleLabel, 1, 0);
+            layoutPanel.SetRowSpan(consoleLabel, 3); // 让consoleLabel占据右侧两行
+
+            this.Controls.Add(layoutPanel);
 
             responseWebView = new WebView2
             {
-                Location = new Point(10, 100),
-                Size = new Size(670, 1070),
+                Location = new Point(10, 90),
+                Size = new Size(670, 1000),
                 Anchor =
                     AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
                 Margin = new Padding(0, 0, 50, 0),
                 DefaultBackgroundColor = Color.FromArgb(30, 30, 30)
             };
             this.Controls.Add(responseWebView);
+
+            ConsoleManager.MessagesUpdated += UpdateConsoleLabel;
 
             m_GlobalHook = Hook.GlobalEvents();
             m_GlobalHook.KeyDown += GlobalHookKeyDown;
@@ -72,6 +109,19 @@ namespace MyCSharpProject
             this.ShowInTaskbar = false;
 
             InitializeAsync();
+            StartWebServer();
+        }
+
+        private void UpdateConsoleLabel()
+        {
+            if (consoleLabel.InvokeRequired)
+            {
+                consoleLabel.Invoke(new Action(UpdateConsoleLabel));
+            }
+            else
+            {
+                consoleLabel.Text = ConsoleManager.GetLatestMessages();
+            }
         }
 
         private async void InitializeAsync()
@@ -90,13 +140,14 @@ namespace MyCSharpProject
         {
             if (e.KeyCode == Keys.F9)
             {
+                ConsoleManager.WriteLine("捕获到f9...");
                 count++;
                 string fileName = CaptureScreenshot();
                 string timeStamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
                 messageLabel.Text =
                     $"Successfully captured the main screen, Count: {count}, Time: {timeStamp}";
                 DisplayThumbnail(fileName);
-
+                ConsoleManager.WriteLine("发送api请求...");
                 ApiHandler
                     .CallOpenAiApi(fileName)
                     .ContinueWith(task =>
@@ -130,7 +181,9 @@ window.onload = function() {
 </body>
 </html>";
 
+                        ConsoleManager.WriteLine("尝试保存文件到本地。");
                         string htmlFilePath = SaveHtmlToFile(htmlContent, timeStamp);
+                        webServer.UpdateHtmlFilePath(htmlFilePath); // 更新HTML文件路径
                         responseWebView.Invoke(
                             new Action(
                                 () =>
@@ -214,7 +267,17 @@ window.onload = function() {
 
         private void OnExit(object sender, EventArgs e)
         {
-            Application.Exit();
+            try
+            {
+                webServer.Stop();
+                m_GlobalHook.Dispose();
+                trayIcon.Dispose();
+                Application.Exit();
+            }
+            catch (Exception ex)
+            {
+                ConsoleManager.WriteLine("Error on exit: " + ex.Message);
+            }
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
@@ -229,6 +292,36 @@ window.onload = function() {
         {
             ShowWindow(this.Handle, SW_SHOWNA);
             this.WindowState = FormWindowState.Normal;
+        }
+
+        private void StartWebServer()
+        {
+            string initialHtmlFilePath = Path.Combine(
+                Application.StartupPath,
+                "html",
+                "initial.html"
+            );
+
+            // Ensure the initial.html file exists to prevent errors
+            if (!File.Exists(initialHtmlFilePath))
+            {
+                File.WriteAllText(
+                    initialHtmlFilePath,
+                    "<html><body><h1>Initial File</h1></body></html>"
+                );
+            }
+
+            try
+            {
+                webServer = new SimpleWebServer("http://+:8080/", initialHtmlFilePath);
+                webServer.Start();
+                ConsoleManager.WriteLine("Web server started on http://localhost:8080/");
+            }
+            catch (Exception ex)
+            {
+                ConsoleManager.WriteLine("Failed to start web server: " + ex.Message);
+            }
+            //192.168.1.247
         }
     }
 }

@@ -12,9 +12,13 @@ namespace MyCSharpProject
     {
         public static async Task<string> CallOpenAiApi(string imagePath)
         {
-            var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY"); // 从环境变量中读取API key
+            ConsoleManager.WriteLine("读取环境变量...");
+            var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+            ConsoleManager.WriteLine($"API KEY={apiKey}"); // 从环境变量中读取API key
             var promptText = Environment.GetEnvironmentVariable("OPENAI_PROMPT");
+
             var uri = "https://api.openai.com/v1/chat/completions"; // 使用正确的API端点
+            ConsoleManager.WriteLine($"API 端点={uri}");
 
             using (var client = new HttpClient())
             using (var formData = new MultipartFormDataContent())

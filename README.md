@@ -1,5 +1,5 @@
 # sGPT
-A C# Program which using OpenAi API to help users users to quickly communicate errors or any doubts encountered in their daily use of the computer through images in a short period of time.  
+A C# Program which using OpenAi API to help users to quickly communicate errors or any doubts encountered in their daily use of the computer through images in a short period of time.  
 > s: simple / shot / silent
 
 # Why sGPT
@@ -116,3 +116,6 @@ Refer to [OpenAI's official API documentation.](https://platform.openai.com/docs
 
 ### using list package to check 
 `dotnet list package`
+`dotnet build`
+netsh http add urlacl url=http://+:8080/ user=Everyone
+

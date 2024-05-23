@@ -21,3 +21,17 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# 忽略编译生成的文件
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+*.html
+
+# 忽略 WebView2 运行时数据
+WebView2Data/
+
+# 忽略截图，如果您不希望将其纳入版本控制
+screenshot/

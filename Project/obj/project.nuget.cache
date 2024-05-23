@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Xro4YBa7bDmS45bxt+cMsnYZEm3+P90NenmflW5eVYcBywXdGVqvK65S3bTryYe5zSYNA1lcghs4FagLQ6YrVQ==",
+  "dgSpecHash": "vzzHtK+Tv0d69Sqvzu3a1RObyl7UiXaXPexhOh0zmJ4puDfY4OH7bBz3v4Q1M8ydeNtJsUbKT6mmGV9XDgz1Xw==",
   "success": true,
   "projectFilePath": "F:\\Program\\Github-Project-Local\\sGPT\\Project\\Project.csproj",
   "expectedPackageFiles": [
@@ -11,6 +11,7 @@
     "C:\\Users\\yifan\\.nuget\\packages\\microsoft.extensions.primitives\\1.1.1\\microsoft.extensions.primitives.1.1.1.nupkg.sha512",
     "C:\\Users\\yifan\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.1\\microsoft.netcore.platforms.1.1.1.nupkg.sha512",
     "C:\\Users\\yifan\\.nuget\\packages\\microsoft.netcore.targets\\1.1.3\\microsoft.netcore.targets.1.1.3.nupkg.sha512",
+    "C:\\Users\\yifan\\.nuget\\packages\\microsoft.web.webview2\\1.0.2478.35\\microsoft.web.webview2.1.0.2478.35.nupkg.sha512",
     "C:\\Users\\yifan\\.nuget\\packages\\microsoft.win32.primitives\\4.3.0\\microsoft.win32.primitives.4.3.0.nupkg.sha512",
     "C:\\Users\\yifan\\.nuget\\packages\\mousekeyhook\\5.6.0\\mousekeyhook.5.6.0.nupkg.sha512",
     "C:\\Users\\yifan\\.nuget\\packages\\netstandard.library\\1.6.1\\netstandard.library.1.6.1.nupkg.sha512",

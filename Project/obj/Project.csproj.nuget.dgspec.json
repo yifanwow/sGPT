@@ -53,6 +53,10 @@
               "target": "Package",
               "version": "[0.37.0, )"
             },
+            "Microsoft.Web.WebView2": {
+              "target": "Package",
+              "version": "[1.0.2478.35, )"
+            },
             "MouseKeyHook": {
               "target": "Package",
               "version": "[5.6.0, )"

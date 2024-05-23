@@ -23,3 +23,9 @@ F:\Program\Github-Project-Local\sGPT\Project\obj\Debug\net5.0-windows\refint\Pro
 F:\Program\Github-Project-Local\sGPT\Project\obj\Debug\net5.0-windows\Project.pdb
 F:\Program\Github-Project-Local\sGPT\Project\obj\Debug\net5.0-windows\Project.genruntimeconfig.cache
 F:\Program\Github-Project-Local\sGPT\Project\obj\Debug\net5.0-windows\ref\Project.dll
+F:\Program\Github-Project-Local\sGPT\Project\bin\Debug\net5.0-windows\runtimes\win-x64\native\WebView2Loader.dll
+F:\Program\Github-Project-Local\sGPT\Project\bin\Debug\net5.0-windows\Microsoft.Web.WebView2.Core.dll
+F:\Program\Github-Project-Local\sGPT\Project\bin\Debug\net5.0-windows\Microsoft.Web.WebView2.WinForms.dll
+F:\Program\Github-Project-Local\sGPT\Project\bin\Debug\net5.0-windows\Microsoft.Web.WebView2.Wpf.dll
+F:\Program\Github-Project-Local\sGPT\Project\bin\Debug\net5.0-windows\runtimes\win-arm64\native\WebView2Loader.dll
+F:\Program\Github-Project-Local\sGPT\Project\bin\Debug\net5.0-windows\runtimes\win-x86\native\WebView2Loader.dll

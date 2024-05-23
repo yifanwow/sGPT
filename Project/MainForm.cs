@@ -4,6 +4,9 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Gma.System.MouseKeyHook;
+using Markdig;
+using Microsoft.Web.WebView2.WinForms;
+using Microsoft.Web.WebView2.Core;
 
 namespace MyCSharpProject
 {
@@ -16,7 +19,7 @@ namespace MyCSharpProject
         private IKeyboardMouseEvents m_GlobalHook;
         Label messageLabel;
         PictureBox thumbnailBox;
-        WebBrowser responseWebBrowser; // 使用WebBrowser控件
+        WebView2 responseWebView;
         NotifyIcon trayIcon;
         ContextMenuStrip trayMenu;
         int count = 0;
@@ -26,7 +29,7 @@ namespace MyCSharpProject
             this.Text = "sGPT";
             SetupTrayIcon();
             InitializeFolder();
-            this.Size = new Size(800, 600); // 调整窗口大小以适应WebBrowser控件
+            this.Size = new Size(800, 600);
 
             messageLabel = new Label
             {
@@ -44,12 +47,14 @@ namespace MyCSharpProject
             };
             this.Controls.Add(thumbnailBox);
 
-            responseWebBrowser = new WebBrowser
+            responseWebView = new WebView2
             {
                 Location = new Point(10, 230),
-                Size = new Size(780, 1350)
+                Size = new Size(780, 350),
+                Anchor =
+                    AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
             };
-            this.Controls.Add(responseWebBrowser);
+            this.Controls.Add(responseWebView);
 
             m_GlobalHook = Hook.GlobalEvents();
             m_GlobalHook.KeyDown += GlobalHookKeyDown;
@@ -58,6 +63,22 @@ namespace MyCSharpProject
             trayIcon.DoubleClick += TrayIcon_DoubleClick;
 
             this.ShowInTaskbar = false;
+
+            InitializeAsync();
+        }
+
+        private async void InitializeAsync()
+        {
+            var userDataFolder = Path.Combine(Application.StartupPath, "WebView2Data");
+            var environment = await CoreWebView2Environment.CreateAsync(null, userDataFolder);
+
+            // 确保 WebView2 控件初始化完毕
+            await responseWebView.EnsureCoreWebView2Async(environment);
+
+            // 配置 WebView2 设置
+            responseWebView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
+            responseWebView.CoreWebView2.Settings.AreDevToolsEnabled = true;
+            responseWebView.CoreWebView2.Settings.IsScriptEnabled = true;
         }
 
         private void GlobalHookKeyDown(object sender, KeyEventArgs e)
@@ -76,9 +97,37 @@ namespace MyCSharpProject
                     .ContinueWith(task =>
                     {
                         var content = ApiResponseHandler.ExtractContentFromResponse(task.Result);
-                        var htmlContent = Markdig.Markdown.ToHtml(content);
-                        responseWebBrowser.Invoke(
-                            new Action(() => responseWebBrowser.DocumentText = htmlContent)
+                        var pipeline = new MarkdownPipelineBuilder()
+                            .UseAdvancedExtensions()
+                            .Build();
+                        var htmlContent = Markdown.ToHtml(content, pipeline);
+
+                        // 使用Prism.js进行代码高亮
+                        htmlContent =
+                            @"
+    <html>
+    <head>
+        <meta charset='UTF-8'>
+        <link rel='stylesheet' href='F:\Program\Github-Project-Local\sGPT\Project\Assets\atom-one-dark.min.css'>
+        <script src='F:\Program\Github-Project-Local\sGPT\Project\Assets\highlight.min.js'></script>
+
+        <style>
+            body { font-family: 'Roboto', sans-serif; }
+            pre, code { white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word; font-family: Consolas, Monaco, 'Courier New', monospace, 'Microsoft YaHei', sans-serif; }
+            pre { padding: 10px; background-color: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; }
+        </style>
+    </head>
+    <body>"
+                            + htmlContent
+                            + @"<script>hljs.highlightAll();</script>
+    </body>
+    </html>";
+
+                        // 保存HTML内容到本地文件
+                        SaveHtmlToFile(htmlContent, timeStamp);
+
+                        responseWebView.Invoke(
+                            new Action(() => responseWebView.NavigateToString(htmlContent))
                         );
                     });
 
@@ -128,6 +177,17 @@ namespace MyCSharpProject
             Image thumb = img.GetThumbnailImage(320, 180, () => false, IntPtr.Zero);
             thumbnailBox.Image = thumb;
             img.Dispose();
+        }
+
+        private void SaveHtmlToFile(string htmlContent, string timeStamp)
+        {
+            string path = Path.Combine(Application.StartupPath, "html");
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            string fileName = Path.Combine(path, $"{timeStamp}.html");
+            File.WriteAllText(fileName, htmlContent);
         }
 
         private void SetupTrayIcon()

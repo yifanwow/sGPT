@@ -1,7 +1,7 @@
 {
   "version": 3,
   "targets": {
-    "net5.0-windows7.0": {
+    "net7.0-windows7.0": {
       "DotNetEnv/3.0.0": {
         "type": "package",
         "dependencies": {
@@ -22,12 +22,12 @@
       "Markdig/0.37.0": {
         "type": "package",
         "compile": {
-          "lib/netstandard2.1/Markdig.dll": {
+          "lib/net6.0/Markdig.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/netstandard2.1/Markdig.dll": {
+          "lib/net6.0/Markdig.dll": {
             "related": ".xml"
           }
         }
@@ -217,12 +217,12 @@
       "Newtonsoft.Json/13.0.3": {
         "type": "package",
         "compile": {
-          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+          "lib/net6.0/Newtonsoft.Json.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+          "lib/net6.0/Newtonsoft.Json.dll": {
             "related": ".xml"
           }
         }
@@ -4970,7 +4970,7 @@
     }
   },
   "projectFileDependencyGroups": {
-    "net5.0-windows7.0": [
+    "net7.0-windows7.0": [
       "DotNetEnv >= 3.0.0",
       "Markdig >= 0.37.0",
       "Microsoft.Web.WebView2 >= 1.0.2478.35",
@@ -5001,7 +5001,7 @@
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
-        "net5.0-windows"
+        "net7.0-windows"
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
@@ -5009,8 +5009,8 @@
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "net5.0-windows7.0": {
-          "targetAlias": "net5.0-windows",
+        "net7.0-windows7.0": {
+          "targetAlias": "net7.0-windows",
           "projectReferences": {}
         }
       },
@@ -5021,8 +5021,8 @@
       }
     },
     "frameworks": {
-      "net5.0-windows7.0": {
-        "targetAlias": "net5.0-windows",
+      "net7.0-windows7.0": {
+        "targetAlias": "net7.0-windows",
         "dependencies": {
           "DotNetEnv": {
             "target": "Package",
@@ -5077,10 +5077,10 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'MouseKeyHook 5.6.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net5.0-windows7.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'MouseKeyHook 5.6.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net7.0-windows7.0'. This package may not be fully compatible with your project.",
       "libraryId": "MouseKeyHook",
       "targetGraphs": [
-        "net5.0-windows7.0"
+        "net7.0-windows7.0"
       ]
     }
   ]

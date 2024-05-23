@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "vzzHtK+Tv0d69Sqvzu3a1RObyl7UiXaXPexhOh0zmJ4puDfY4OH7bBz3v4Q1M8ydeNtJsUbKT6mmGV9XDgz1Xw==",
+  "dgSpecHash": "UmS0I1CK9Hz6JZfNC+kEZXQn1Zt5t4aX/ffSZnaBegP7NbD5ngyylnIxJGUZ34Ve9KRVFHYKIvVCb0X1iVc89A==",
   "success": true,
   "projectFilePath": "F:\\Program\\Github-Project-Local\\sGPT\\Project\\Project.csproj",
   "expectedPackageFiles": [
@@ -94,10 +94,10 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'MouseKeyHook 5.6.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net5.0-windows7.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'MouseKeyHook 5.6.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net7.0-windows7.0'. This package may not be fully compatible with your project.",
       "libraryId": "MouseKeyHook",
       "targetGraphs": [
-        "net5.0-windows7.0"
+        "net7.0-windows7.0"
       ]
     }
   ]

@@ -104,6 +104,7 @@ namespace MyCSharpProject
             m_GlobalHook.KeyDown += GlobalHookKeyDown;
 
             this.Resize += MainForm_Resize;
+            this.FormClosing += MainForm_FormClosing;
             trayIcon.DoubleClick += TrayIcon_DoubleClick;
 
             this.ShowInTaskbar = false;
@@ -285,6 +286,21 @@ window.onload = function() {
             if (WindowState == FormWindowState.Minimized)
             {
                 this.Hide();
+            }
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                webServer.Stop();
+                m_GlobalHook.Dispose();
+                trayIcon.Dispose();
+                Application.Exit();
+            }
+            catch (Exception ex)
+            {
+                ConsoleManager.WriteLine("Error on exit: " + ex.Message);
             }
         }
 

@@ -1,0 +1,9 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\yifan\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\yifan\\.nuget\\packages",
+      "F:\\Program\\vscode_tool\\NuGetPackages"
+    ]
+  }
+}

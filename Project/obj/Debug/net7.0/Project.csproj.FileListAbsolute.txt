@@ -1,0 +1,5 @@
+F:\Program\Github-Project-Local\sGPT\Project\obj\Debug\net7.0\Project.csproj.AssemblyReference.cache
+F:\Program\Github-Project-Local\sGPT\Project\obj\Debug\net7.0\Project.GeneratedMSBuildEditorConfig.editorconfig
+F:\Program\Github-Project-Local\sGPT\Project\obj\Debug\net7.0\Project.AssemblyInfoInputs.cache
+F:\Program\Github-Project-Local\sGPT\Project\obj\Debug\net7.0\Project.AssemblyInfo.cs
+F:\Program\Github-Project-Local\sGPT\Project\obj\Debug\net7.0\Project.csproj.CoreCompileInputs.cache

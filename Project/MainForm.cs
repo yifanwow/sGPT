@@ -58,7 +58,8 @@ namespace MyCSharpProject
                 Size = new Size(670, 1070),
                 Anchor =
                     AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
-                Margin = new Padding(0, 0, 50, 0)
+                Margin = new Padding(0, 0, 50, 0),
+                DefaultBackgroundColor = Color.FromArgb(30, 30, 30)
             };
             this.Controls.Add(responseWebView);
 
@@ -114,9 +115,9 @@ namespace MyCSharpProject
     <link rel='stylesheet' href='file:///F:/Program/Github-Project-Local/sGPT/Project/Assets/atom-one-dark.min.css'>
     <script src='file:///F:/Program/Github-Project-Local/sGPT/Project/Assets/highlight.min.js'></script>
     <style>
-        body { font-family: 'Roboto', sans-serif; }
+        body { font-family: 'Roboto', sans-serif;  background-color: #303030;color: #e7e7e7;}
         pre, code { white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word; font-family: Consolas, Monaco, 'Courier New', monospace, 'Microsoft YaHei', sans-serif; }
-        pre { padding: 10px; background-color: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; }
+        pre { padding: 7px; background-color: #888888; border: 1px solid #6e6e6e; border-radius: 3px; }
     </style>
 </head>
 <body>"

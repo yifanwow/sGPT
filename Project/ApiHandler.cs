@@ -10,12 +10,11 @@ namespace MyCSharpProject
 {
     public static class ApiHandler
     {
-        public static async Task<string> CallOpenAiApi(string imagePath)
+        public static async Task<string> CallOpenAiApi(string imagePath, string prompt)
         {
             ConsoleManager.WriteLine("读取环境变量...");
             var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
             ConsoleManager.WriteLine($"API KEY={apiKey}"); // 从环境变量中读取API key
-            var promptText = Environment.GetEnvironmentVariable("OPENAI_PROMPT");
 
             var uri = "https://api.openai.com/v1/chat/completions"; // 使用正确的API端点
             ConsoleManager.WriteLine($"API 端点={uri}");
@@ -35,7 +34,7 @@ namespace MyCSharpProject
                         role = "user",
                         content = new object[]
                         {
-                            new { type = "text", text = promptText },
+                            new { type = "text", text = prompt },
                             new
                             {
                                 type = "image_url",
@@ -54,6 +53,59 @@ namespace MyCSharpProject
                     messages = messages,
                     //max_tokens = 300 // 根据需要调整生成文本的长度
                 };
+
+                var jsonContent = new StringContent(
+                    JsonConvert.SerializeObject(data),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+
+                var response = await client.PostAsync(uri, jsonContent);
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsStringAsync();
+                }
+                else
+                {
+                    return $"Error: {response.StatusCode}";
+                }
+            }
+        }
+
+        public static async Task<string> CallOpenAiApiForClipboard(
+            string prompt,
+            string clipboardContent
+        )
+        {
+            ConsoleManager.WriteLine("读取环境变量...");
+            var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+            ConsoleManager.WriteLine($"API KEY={apiKey}");
+
+            var uri = "https://api.openai.com/v1/chat/completions";
+            ConsoleManager.WriteLine($"API 端点={uri}");
+
+            using (var client = new HttpClient())
+            using (var formData = new MultipartFormDataContent())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                    "Bearer",
+                    apiKey
+                );
+
+                var messages = new[]
+                {
+                    new
+                    {
+                        role = "user",
+                        content = new object[]
+                        {
+                            new { type = "text", text = prompt },
+                            new { type = "text", text = clipboardContent }
+                        }
+                    }
+                };
+
+                var data = new { model = "gpt-4-turbo", messages = messages };
 
                 var jsonContent = new StringContent(
                     JsonConvert.SerializeObject(data),

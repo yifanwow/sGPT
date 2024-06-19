@@ -73,6 +73,15 @@ namespace MyCSharpProject
                 if (File.Exists(_htmlFilePath))
                 {
                     string responseString = File.ReadAllText(_htmlFilePath);
+                    responseString = responseString.Replace(
+                        "file:///F:/Program/Github-Project-Local/sGPT/Project/Assets/atom-one-dark.min.css",
+                        "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/atom-one-dark.min.css"
+                    );
+                    responseString = responseString.Replace(
+                        "file:///F:/Program/Github-Project-Local/sGPT/Project/Assets/highlight.min.js",
+                        "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"
+                    );
+                    responseString = responseString.Replace("font-size: 19px;", "font-size: 23px;"); //修改字体大小
                     byte[] buffer = Encoding.UTF8.GetBytes(responseString);
                     context.Response.ContentType = "text/html";
                     context.Response.ContentLength64 = buffer.Length;

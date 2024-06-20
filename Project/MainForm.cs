@@ -25,6 +25,8 @@ namespace MyCSharpProject
         Label consoleLabel;
         int count = 0;
         private SimpleWebServer webServer;
+        private Button toggleSliderButton;
+        private TrackBar opacitySlider;
 
         public MainForm()
         {
@@ -98,6 +100,28 @@ namespace MyCSharpProject
             };
             this.Controls.Add(responseWebView);
 
+            toggleSliderButton = new Button
+            {
+                Text = "Toggle Opacity Slider",
+                Dock = DockStyle.Top,
+                ForeColor = Color.White,
+                BackColor = Color.FromArgb(30, 30, 30)
+            };
+            toggleSliderButton.Click += ToggleSliderButton_Click;
+            this.Controls.Add(toggleSliderButton);
+
+            opacitySlider = new TrackBar
+            {
+                Minimum = 17,
+                Maximum = 100,
+                Value = 100,
+                TickFrequency = 10,
+                Dock = DockStyle.Top,
+                Visible = false
+            };
+            opacitySlider.Scroll += OpacitySlider_Scroll;
+            this.Controls.Add(opacitySlider);
+
             ConsoleManager.MessagesUpdated += UpdateConsoleLabel;
 
             m_GlobalHook = Hook.GlobalEvents();
@@ -111,6 +135,16 @@ namespace MyCSharpProject
 
             InitializeAsync();
             StartWebServer();
+        }
+
+        private void ToggleSliderButton_Click(object sender, EventArgs e)
+        {
+            opacitySlider.Visible = !opacitySlider.Visible;
+        }
+
+        private void OpacitySlider_Scroll(object sender, EventArgs e)
+        {
+            this.Opacity = opacitySlider.Value / 100.0;
         }
 
         private void UpdateConsoleLabel()
@@ -136,57 +170,67 @@ namespace MyCSharpProject
             // 如果有适用的属性设置
             // webView.CoreWebView2.Settings.IsFileAccessFromFileUrlsAllowed = true;
         }
-private void GlobalHookKeyDown(object sender, KeyEventArgs e)
-{
-    if (e.KeyCode == Keys.F9 || e.KeyCode == Keys.F1 || e.KeyCode == Keys.F3)
-    {
-        ConsoleManager.WriteLine($"捕获到{e.KeyCode}...");
-        count++;
-        string fileName = null;
-        string clipboardContent = null;
 
-        if (e.KeyCode == Keys.F9 || e.KeyCode == Keys.F1)
+        private void GlobalHookKeyDown(object sender, KeyEventArgs e)
         {
-            fileName = CaptureScreenshot();
-            DisplayThumbnail(fileName);
-        }
-        else if (e.KeyCode == Keys.F3)
-        {
-            clipboardContent = GetClipboardText();
-        }
+            if (e.KeyCode == Keys.F9 || e.KeyCode == Keys.F1 || e.KeyCode == Keys.F3)
+            {
+                ConsoleManager.WriteLine($"捕获到{e.KeyCode}...");
+                count++;
+                string fileName = null;
+                string clipboardContent = null;
 
-        string timeStamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-        messageLabel.Text = $"Successfully captured, Count: {count}, Time: {timeStamp}";
-
-        ConsoleManager.WriteLine("发送api请求...");
-
-        string promptEnvVar = e.KeyCode == Keys.F9 ? "OPENAI_PROMPT" : 
-                              (e.KeyCode == Keys.F1 ? "OPENAI_PROMPTBOTH" : "OPENAI_PROMPT_CLIPBOARD");
-        string prompt = Environment.GetEnvironmentVariable(promptEnvVar);
-
-        if (e.KeyCode == Keys.F3)
-        {
-            ApiHandler
-                .CallOpenAiApiForClipboard(prompt, clipboardContent)
-                .ContinueWith(task =>
+                if (e.KeyCode == Keys.F9 || e.KeyCode == Keys.F1)
                 {
-                    var content = ApiResponseHandler.ExtractContentFromResponse(task.Result);
-                    var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
-                    var htmlContent = Markdown.ToHtml(content, pipeline);
+                    fileName = CaptureScreenshot();
+                    DisplayThumbnail(fileName);
+                }
+                else if (e.KeyCode == Keys.F3)
+                {
+                    clipboardContent = GetClipboardText();
+                }
 
-                    htmlContent = @"
+                string timeStamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+                messageLabel.Text = $"Successfully captured, Count: {count}, Time: {timeStamp}";
+
+                ConsoleManager.WriteLine("发送api请求...");
+
+                string promptEnvVar =
+                    e.KeyCode == Keys.F9
+                        ? "OPENAI_PROMPT"
+                        : (e.KeyCode == Keys.F1 ? "OPENAI_PROMPTBOTH" : "OPENAI_PROMPT_CLIPBOARD");
+                string prompt = Environment.GetEnvironmentVariable(promptEnvVar);
+
+                if (e.KeyCode == Keys.F3)
+                {
+                    ApiHandler
+                        .CallOpenAiApiForClipboard(prompt, clipboardContent)
+                        .ContinueWith(task =>
+                        {
+                            var content = ApiResponseHandler.ExtractContentFromResponse(
+                                task.Result
+                            );
+                            var pipeline = new MarkdownPipelineBuilder()
+                                .UseAdvancedExtensions()
+                                .Build();
+                            var htmlContent = Markdown.ToHtml(content, pipeline);
+
+                            htmlContent =
+                                @"
 <html>
 <head>
     <meta charset='UTF-8'>
     <link rel='stylesheet' href='file:///F:/Program/Github-Project-Local/sGPT/Project/Assets/atom-one-dark.min.css'>
     <script src='file:///F:/Program/Github-Project-Local/sGPT/Project/Assets/highlight.min.js'></script>
     <style>
-        body { font-family: 'Roboto', sans-serif;  background-color: #303030;color: #e7e7e7;font-size: 19px;}
+        body { font-family: 'Roboto', sans-serif;  background-color: #303030;color: #e7e7e7;font-size: 17px;}
         pre, code { white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word; font-family: Consolas, Monaco, 'Courier New', monospace; 'Microsoft YaHei', sans-serif; }
         pre { padding: 7px; background-color: #888888; border: 1px solid #6e6e6e; border-radius: 3px; }
     </style>
 </head>
-<body>" + htmlContent + @"<script>
+<body>"
+                                + htmlContent
+                                + @"<script>
 window.onload = function() {
     hljs.highlightAll();
 };
@@ -194,35 +238,49 @@ window.onload = function() {
 </body>
 </html>";
 
-                    ConsoleManager.WriteLine("尝试保存文件到本地。");
-                    string htmlFilePath = SaveHtmlToFile(htmlContent, timeStamp);
-                    webServer.UpdateHtmlFilePath(htmlFilePath); // 更新HTML文件路径
-                    responseWebView.Invoke(new Action(() => responseWebView.CoreWebView2.Navigate($"file:///{htmlFilePath}")));
-                });
-        }
-        else
-        {
-            ApiHandler
-                .CallOpenAiApi(fileName, prompt)
-                .ContinueWith(task =>
+                            ConsoleManager.WriteLine("尝试保存文件到本地。");
+                            string htmlFilePath = SaveHtmlToFile(htmlContent, timeStamp);
+                            webServer.UpdateHtmlFilePath(htmlFilePath); // 更新HTML文件路径
+                            responseWebView.Invoke(
+                                new Action(
+                                    () =>
+                                        responseWebView.CoreWebView2.Navigate(
+                                            $"file:///{htmlFilePath}"
+                                        )
+                                )
+                            );
+                        });
+                }
+                else
                 {
-                    var content = ApiResponseHandler.ExtractContentFromResponse(task.Result);
-                    var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
-                    var htmlContent = Markdown.ToHtml(content, pipeline);
+                    ApiHandler
+                        .CallOpenAiApi(fileName, prompt)
+                        .ContinueWith(task =>
+                        {
+                            var content = ApiResponseHandler.ExtractContentFromResponse(
+                                task.Result
+                            );
+                            var pipeline = new MarkdownPipelineBuilder()
+                                .UseAdvancedExtensions()
+                                .Build();
+                            var htmlContent = Markdown.ToHtml(content, pipeline);
 
-                    htmlContent = @"
+                            htmlContent =
+                                @"
 <html>
 <head>
     <meta charset='UTF-8'>
     <link rel='stylesheet' href='file:///F:/Program/Github-Project-Local/sGPT/Project/Assets/atom-one-dark.min.css'>
     <script src='file:///F:/Program/Github-Project-Local/sGPT/Project/Assets/highlight.min.js'></script>
     <style>
-        body { font-family: 'Roboto', sans-serif;  background-color: #303030;color: #e7e7e7;font-size: 19px;}
+        body { font-family: 'Roboto', sans-serif;  background-color: #303030;color: #e7e7e7;font-size: 17px;}
         pre, code { white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word; font-family: Consolas, Monaco, 'Courier New', monospace; 'Microsoft YaHei', sans-serif; }
         pre { padding: 7px; background-color: #888888; border: 1px solid #6e6e6e; border-radius: 3px; }
     </style>
 </head>
-<body>" + htmlContent + @"<script>
+<body>"
+                                + htmlContent
+                                + @"<script>
 window.onload = function() {
     hljs.highlightAll();
 };
@@ -230,16 +288,24 @@ window.onload = function() {
 </body>
 </html>";
 
-                    ConsoleManager.WriteLine("尝试保存文件到本地。");
-                    string htmlFilePath = SaveHtmlToFile(htmlContent, timeStamp);
-                    webServer.UpdateHtmlFilePath(htmlFilePath); // 更新HTML文件路径
-                    responseWebView.Invoke(new Action(() => responseWebView.CoreWebView2.Navigate($"file:///{htmlFilePath}")));
-                });
+                            ConsoleManager.WriteLine("尝试保存文件到本地。");
+                            string htmlFilePath = SaveHtmlToFile(htmlContent, timeStamp);
+                            webServer.UpdateHtmlFilePath(htmlFilePath); // 更新HTML文件路径
+                            responseWebView.Invoke(
+                                new Action(
+                                    () =>
+                                        responseWebView.CoreWebView2.Navigate(
+                                            $"file:///{htmlFilePath}"
+                                        )
+                                )
+                            );
+                        });
+                }
+
+                e.Handled = true;
+            }
         }
 
-        e.Handled = true;
-    }
-}
         private void InitializeFolder()
         {
             string path = Path.Combine(Application.StartupPath, "screenshot");
